@@ -4,23 +4,22 @@ import (
  //   "bufio"
     "fmt"
     "os"
-   // "log"
+    "log"
 )
 
 
-//func addToDo(todoFile string, todo string) {
-  //  fmt.Println("adding")
-    //file, err := os.OpenFile(todoFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
- //   if err != nil {
-   //     log.Fatalf("Failed to open file: %v", err)
- //   }
-   // defer file.Close()
+func addToDo(todoFile string, todo string) {
+    file, err := os.OpenFile(todoFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+    if err != nil {
+        log.Fatalf("Failed to open file: %v", err)
+    }
+    defer file.Close()
 
- //   if _, err := file.WriteString(todo + "\n"); err != nil {
-      //  log.Fatalf("Failed to write to file: %v", err)
-    //}
-  //  fmt.Println(todo)
-//}
+    if _, err := file.WriteString(todo + "\n"); err != nil {
+        log.Fatalf("Failed to write to file: %v", err)
+    }
+    fmt.Println("added")
+}
 
 //func completeToDo(todoFile string) {
  //   fmt.Println("completing")
@@ -90,11 +89,10 @@ func main() {
     if len(os.Args) > 1 {
         command := os.Args[1]
 	todoFile := "/home/nestor/dev/todo/todo.txt"
-  fmt.Println(todoFile) 
         switch command {
         case "--add":
             if len(os.Args) > 2 {
-              //  addToDo(todoFile, os.Args[2])
+                addToDo(todoFile, os.Args[2])
             } else {
                 fmt.Println("Nothing to add...")
             }
