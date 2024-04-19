@@ -18,7 +18,6 @@ func addToDo(todoFile string, todo string) {
     if _, err := file.WriteString(todo + "\n"); err != nil {
         log.Fatalf("Failed to write to file: %v", err)
     }
-    fmt.Println("added")
 }
 
 func completeToDo(todoFile string) {
@@ -76,12 +75,10 @@ func whatsNext(todoFile string) string {
     }
 }
 
-//func deferToDo(todoFile string) {
-     // nextTask := whatsNext(todoFile)
-    //addToDo("whats next")
-    //completeToDo()
- //   return todoFile
-//}
+func deferToDo(todoFile string) {
+    addToDo(todoFile, whatsNext(todoFile))
+    completeToDo(todoFile)
+}
 
 func main() {
     if len(os.Args) > 1 {
@@ -97,7 +94,7 @@ func main() {
         case "--complete":
             completeToDo(todoFile)
         case "--defer":
-            //deferToDo(todoFile)
+            deferToDo(todoFile)
         case "--whatnext":
             fmt.Println(whatsNext(todoFile))
         default:
