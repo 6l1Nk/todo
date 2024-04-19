@@ -1,7 +1,7 @@
 package main
 
 import (
- //   "bufio"
+    "bufio"
     "fmt"
     "os"
     "log"
@@ -21,62 +21,60 @@ func addToDo(todoFile string, todo string) {
     fmt.Println("added")
 }
 
-//func completeToDo(todoFile string) {
- //   fmt.Println("completing")
-   // inputFile, err := os.Open(todoFile)
- //   if err != nil {
-	   // log.Fatalf("Failed to open file: %v", err)
-   // }
+func completeToDo(todoFile string) {
+    inputFile, err := os.Open(todoFile)
+    if err != nil {
+	    log.Fatalf("Failed to open file: %v", err)
+    }
 
- //   tempFileName := todoFile + ".tmp"
-   // tempFile, err := os.Create(tempFileName)
- //   if err != nil {
-	 //   log.Fatalf("Failed horrifically %v", err)
- //   }
-   // defer tempFile.Close()
+    tempFileName := todoFile + ".tmp"
+    tempFile, err := os.Create(tempFileName)
+    if err != nil {
+	    log.Fatalf("Failed horrifically %v", err)
+    }
+    defer tempFile.Close()
 
- //   scanner := bufio.NewScanner(inputFile)
-   // scanner.Scan()
- //   for scanner.Scan() {
-	  //  _, err := tempFile.WriteString(scanner.Text() + "\n")
-	//    if err != nil {
-		 //   log.Fatalf("what the heck happnd?, %v", err)
-	 //   }
- //   }//
+    scanner := bufio.NewScanner(inputFile)
+    scanner.Scan()
+    for scanner.Scan() {
+	    _, err := tempFile.WriteString(scanner.Text() + "\n")
+	    if err != nil {
+		    log.Fatalf("what the heck happnd?, %v", err)
+	    }
+    }
 
-    //if err := scanner.Err(); err != nil {
-	//    log.Fatalf("oh my gaaaawddd!! %v", err)
- //   }
+    if err := scanner.Err(); err != nil {
+	    log.Fatalf("oh my gaaaawddd!! %v", err)
+    }
 
- //   inputFile.Close()
-   // err = os.Remove(todoFile)
- //   if err != nil {
-	   // log.Fatalf("snapple dawg $v", err)
-   // }
+    inputFile.Close()
+    err = os.Remove(todoFile)
+    if err != nil {
+	    log.Fatalf("snapple dawg $v", err)
+    }
 
- //   err = os.Rename(tempFileName, todoFile)
-    //if err != nil {
-	//    log.Fatalf("renamin ain wut it usd 2b %v", err)
- //   }
+    err = os.Rename(tempFileName, todoFile)
+    if err != nil {
+	    log.Fatalf("renamin ain wut it usd 2b %v", err)
+    }
 
-//}
+}
 
-//func whatsNext(todoFile string) {
-    //fmt.Println("What's next?")
+func whatsNext(todoFile string) string {
+    file, err := os.Open(todoFile)
+    if err != nil {
+	    fmt.Println("Error:", err)
+      return "Error"
+    }
+    defer file.Close()
 
-    //file, err := os.Open(todoFile)
-    //if err != nil {
-	    //fmt.Println("Error:", err)
-	//    return
-    //}
- //   defer file.Close()
-
-   // scanner := bufio.NewScanner(file)
-    //if scanner.Scan() {
-	    //return scanner.Text()
-    //}
- //   return todoFile
-//}
+    scanner := bufio.NewScanner(file)
+    if scanner.Scan() {
+	    return scanner.Text()
+    } else {
+      return ""
+    }
+}
 
 //func deferToDo(todoFile string) {
      // nextTask := whatsNext(todoFile)
@@ -97,11 +95,11 @@ func main() {
                 fmt.Println("Nothing to add...")
             }
         case "--complete":
-            //completeToDo(todoFile)
+            completeToDo(todoFile)
         case "--defer":
             //deferToDo(todoFile)
         case "--whatnext":
-            //fmt.Println(whatsNext(todoFile))
+            fmt.Println(whatsNext(todoFile))
         default:
             fmt.Println("invalid argument...")
             return
