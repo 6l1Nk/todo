@@ -1,107 +1,105 @@
 package main
 
 import (
-    "bufio"
-    "fmt"
-    "os"
-    "log"
+	"bufio"
+	"fmt"
+	"log"
+	"os"
 )
 
+var TODO_FILE string = "/home/nestor/Dev/todo/todo.txt"
 
-func addToDo(todoFile string, todo string) {
-    file, err := os.OpenFile(todoFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-    if err != nil {
-        log.Fatalf("Failed to open file: %v", err)
-    }
-    defer file.Close()
+func addToDo(todo string) {
+	file, err := os.OpenFile(TODO_FILE, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatalf("Failed to open file: %v", err)
+	}
+	defer file.Close()
 
-    if _, err := file.WriteString(todo + "\n"); err != nil {
-        log.Fatalf("Failed to write to file: %v", err)
-    }
+	if _, err := file.WriteString(todo + "\n"); err != nil {
+		log.Fatalf("Failed to write to file: %v", err)
+	}
 }
 
-func completeToDo(todoFile string) {
-    inputFile, err := os.Open(todoFile)
-    if err != nil {
-	    log.Fatalf("Failed to open file: %v", err)
-    }
+func completeToDo() {
+	inputFile, err := os.Open(TODO_FILE)
+	if err != nil {
+		log.Fatalf("Failed to open file: %v", err)
+	}
 
-    tempFileName := todoFile + ".tmp"
-    tempFile, err := os.Create(tempFileName)
-    if err != nil {
-	    log.Fatalf("Failed horrifically %v", err)
-    }
-    defer tempFile.Close()
+	tempFileName := TODO_FILE + ".tmp"
+	tempFile, err := os.Create(tempFileName)
+	if err != nil {
+		log.Fatalf("Failed horrifically %v", err)
+	}
+	defer tempFile.Close()
 
-    scanner := bufio.NewScanner(inputFile)
-    scanner.Scan()
-    for scanner.Scan() {
-	    _, err := tempFile.WriteString(scanner.Text() + "\n")
-	    if err != nil {
-		    log.Fatalf("what the heck happnd?, %v", err)
-	    }
-    }
+	scanner := bufio.NewScanner(inputFile)
+	scanner.Scan()
+	for scanner.Scan() {
+		_, err := tempFile.WriteString(scanner.Text() + "\n")
+		if err != nil {
+			log.Fatalf("what the heck happnd?, %v", err)
+		}
+	}
 
-    if err := scanner.Err(); err != nil {
-	    log.Fatalf("oh my gaaaawddd!! %v", err)
-    }
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("oh my gaaaawddd!! %v", err)
+	}
 
-    inputFile.Close()
-    err = os.Remove(todoFile)
-    if err != nil {
-	    log.Fatalf("snapple dawg $v", err)
-    }
+	inputFile.Close()
+	err = os.Remove(TODO_FILE)
+	if err != nil {
+		log.Fatalf("snapple dawg $v", err)
+	}
 
-    err = os.Rename(tempFileName, todoFile)
-    if err != nil {
-	    log.Fatalf("renamin ain wut it usd 2b %v", err)
-    }
+	err = os.Rename(tempFileName, TODO_FILE)
+	if err != nil {
+		log.Fatalf("renamin ain wut it usd 2b %v", err)
+	}
 
 }
 
-func whatsNext(todoFile string) string {
-    file, err := os.Open(todoFile)
-    if err != nil {
-	    fmt.Println("Error:", err)
-      return "Error"
-    }
-    defer file.Close()
+func whatsNext() string {
+	file, err := os.Open(TODO_FILE)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return "Error"
+	}
+	defer file.Close()
 
-    scanner := bufio.NewScanner(file)
-    if scanner.Scan() {
-	    return scanner.Text()
-    } else {
-      return ""
-    }
+	scanner := bufio.NewScanner(file)
+	if scanner.Scan() {
+		return scanner.Text()
+	} else {
+		return ""
+	}
 }
 
-func deferToDo(todoFile string) {
-    addToDo(todoFile, whatsNext(todoFile))
-    completeToDo(todoFile)
+func deferToDo() {
+	addToDo(whatsNext())
+	completeToDo()
 }
 
 func main() {
-    if len(os.Args) > 1 {
-        command := os.Args[1]
-	todoFile := "/home/nestor/dev/todo/todo.txt"
-        switch command {
-        case "--add":
-            if len(os.Args) > 2 {
-                addToDo(todoFile, os.Args[2])
-            } else {
-                fmt.Println("Nothing to add...")
-            }
-        case "--complete":
-            completeToDo(todoFile)
-        case "--defer":
-            deferToDo(todoFile)
-        case "--whatnext":
-            fmt.Println(whatsNext(todoFile))
-        default:
-            fmt.Println("invalid argument...")
-            return
-        }
-    }
+	if len(os.Args) > 1 {
+		command := os.Args[1]
+		switch command {
+		case "--add":
+			if len(os.Args) > 2 {
+				addToDo(os.Args[2])
+			} else {
+				fmt.Println("Nothing to add...")
+			}
+		case "--complete":
+			completeToDo()
+		case "--defer":
+			deferToDo()
+		case "--whatnext", "-n":
+			fmt.Println(whatsNext())
+		default:
+			fmt.Println("invalid argument...")
+			return
+		}
+	}
 }
-
-
